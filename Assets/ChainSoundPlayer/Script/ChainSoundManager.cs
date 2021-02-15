@@ -58,7 +58,8 @@ public class ChainSoundManager : MonoBehaviour {
 				player.Prefix = (string)freq;
 				player.StartDateTime = this.recordedDateTime;
 				player.Duration = 60;
-				player.ClearTemporary = false;
+//				player.ClearTemporary = false;
+				player.ClearTemporary = (i == 0) ? true : false;
 				_state = STATE.STATE_RUNNING;
 				i++;
 			}

@@ -533,7 +533,7 @@ PrefabInstance:
     - target: {fileID: 8104646053500629035, guid: c79e677e6c68e7246b364d862a6fbdfe,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 69
+      value: 68
       objectReference: {fileID: 0}
     - target: {fileID: 8104646053500629035, guid: c79e677e6c68e7246b364d862a6fbdfe,
         type: 3}
@@ -553,7 +553,7 @@ PrefabInstance:
     - target: {fileID: 8104646053500629035, guid: c79e677e6c68e7246b364d862a6fbdfe,
         type: 3}
       propertyPath: m_text
-      value: '--------------------------------------------------------------------g'
+      value: '--------------------------------------------------------------------'
       objectReference: {fileID: 0}
     - target: {fileID: 8126201519580559624, guid: c79e677e6c68e7246b364d862a6fbdfe,
         type: 3}
@@ -687,6 +687,11 @@ PrefabInstance:
       propertyPath: _spectrumUnitManager
       value: 
       objectReference: {fileID: 2047032185}
+    - target: {fileID: 114092638211203226, guid: 1bb5d7b0e7e9d7b42b53e753f450e38d,
+        type: 3}
+      propertyPath: ip_addr
+      value: http://192.168.10.51:5000
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1bb5d7b0e7e9d7b42b53e753f450e38d, type: 3}
 --- !u!1 &1782044857

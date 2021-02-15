@@ -160,10 +160,7 @@ public class ChainSoundPlayer : MonoBehaviour {
 
 	private IEnumerator SetAudioClip(string fileName, int audioSourceNumber) {
 		_lastLoadedTrackFile = fileName;
-		Debug.Log(fileName);
-
-		System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-		sw.Start();
+		Debug.Log($"AudioSource{audioSourceNumber} : load audio clip {fileName}");
 
 		var url = this._ip_addr + URL_GET_AUDIO_FILE + "/" + this._uuid + "/" + fileName;
 		var request = new WWW(url);
@@ -181,8 +178,6 @@ public class ChainSoundPlayer : MonoBehaviour {
 					_spectrumUnitManager.SetSpectrumLabel($"{waveName}({freq})", this._index);
 				}
 				audioSource.Play();
-				sw.Stop();
-				Debug.Log(sw.ElapsedMilliseconds + "ms");
 				_currentTrackName = _lastLoadedTrackFile;
 				_state = STATE.STATE_RUNNING;
 			}
@@ -209,7 +204,7 @@ public class ChainSoundPlayer : MonoBehaviour {
 
 		var currentAudioSource = this._audioSources[_currentPlayingAudioSource];
 		if (currentAudioSource.isPlaying) {
-			if (currentAudioSource.time >= 30f && _state == STATE.STATE_RUNNING) {
+			if (currentAudioSource.time >= 30f + _index * 2 && _state == STATE.STATE_RUNNING) {
 				_state = STATE.STATE_DOWNLOAD_REQUEST;
 			}
 
@@ -225,9 +220,12 @@ public class ChainSoundPlayer : MonoBehaviour {
 				}
 			}
 		}
-		else {
-			if (_state == STATE.STATE_DOWNLOAD_DONE) {
+//		else {
+			if ((_state == STATE.STATE_DOWNLOAD_DONE) && (duration - currentAudioSource.time < Time.deltaTime)) {
+				var remain = duration - currentAudioSource.time;
+				Debug.Log($"clip remain time {remain} sec");
 				_currentPlayingAudioSource = (_currentPlayingAudioSource == 0) ? 1 : 0;
+				Debug.Log($"Change audio source to {_currentPlayingAudioSource}");
 				if (_spectrumUnitManager != null) {
 					_spectrumUnitManager.SetAudioSource(this._audioSources[_currentPlayingAudioSource], this._index);
 				}
@@ -235,7 +233,7 @@ public class ChainSoundPlayer : MonoBehaviour {
 				_currentTrackName = _lastLoadedTrackFile;
 				_state = STATE.STATE_RUNNING;
 			}
-		}
+//		}
 
 		if (_frameCount++ % 60 == 0) {
 			_currentPlayPosition = currentAudioSource.time;

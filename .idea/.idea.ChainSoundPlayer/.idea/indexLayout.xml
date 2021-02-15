@@ -16,11 +16,7 @@
       <Path>.git</Path>
       <Path>.idea</Path>
       <Path>Library</Path>
-      <Path>Logs</Path>
       <Path>Temp</Path>
-      <Path>UnityPackageManager</Path>
-      <Path>bin</Path>
-      <Path>build</Path>
       <Path>obj</Path>
     </explicitExcludes>
   </component>
