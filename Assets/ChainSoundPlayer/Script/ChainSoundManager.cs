@@ -30,7 +30,6 @@ public class ChainSoundManager : MonoBehaviour {
 		var targetDate = recordedDateTime.Split('_')[0];
 		StartCoroutine(GetFrequencyListAtTime(targetDate));
 	}
-	
 
 	// Update is called once per frame
 	void Update () {
@@ -43,7 +42,7 @@ public class ChainSoundManager : MonoBehaviour {
 				var player = (ChainSoundPlayer)soundPlayer.GetComponent<ChainSoundPlayer>();
 
 				if (!_spectrumUnitManager.Equals(null)) {
-					player._spectrumUnitManager = _spectrumUnitManager;
+					player.SpectrumUnitManager = _spectrumUnitManager;
 				}
 				else {
 					Debug.Log("Spectrum Manager not defined.");
@@ -51,15 +50,15 @@ public class ChainSoundManager : MonoBehaviour {
 
 				if (!_audioMixer.Equals(null)) {
 					var grp = _audioMixer.FindMatchingGroups($"wave{i+1}");
-					player._audioMixerGroup = grp[0];
+					player.AudioMixerGroup = grp[0];
 				}
 				
-				player.index = i;				
-				player.ip_addr = this.ip_addr;
-				player.prefix = (string)freq;
-				player.startDateTime = this.recordedDateTime;
-				player.duration = 60;
-				player.clearTemporary = false;
+				player.Index = i;				
+				player.IPAddr = this.ip_addr;
+				player.Prefix = (string)freq;
+				player.StartDateTime = this.recordedDateTime;
+				player.Duration = 60;
+				player.ClearTemporary = false;
 				_state = STATE.STATE_RUNNING;
 				i++;
 			}

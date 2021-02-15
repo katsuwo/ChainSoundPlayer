@@ -9,22 +9,82 @@ using UnityEngine.Audio;
 
 public class ChainSoundPlayer : MonoBehaviour {
 	[Header("Ex. 2020-01-01_23-59")] [SerializeField]
-	public string startDateTime;
+	private string startDateTime;
 
 	[Header("Ex. 60(Sec)")] [SerializeField] [Range(1, 120)]
 	public int duration;
 
-	[SerializeField] public string prefix;
-	[SerializeField] public string ip_addr;
-	[SerializeField] public bool clearTemporary = true;
-	[SerializeField] public string currentTrackName;
-	[SerializeField] public float currentPlayPosition = 0f;
-	[SerializeField] public int _currentPlayingAudioSource = 0;
-	[SerializeField] public STATE _state = STATE.STATE_START;
-	[SerializeField] public AudioMixerGroup _audioMixerGroup;
-	[SerializeField] public SpectrumUnitManager _spectrumUnitManager;
-	[SerializeField] public int index;
-	
+	[SerializeField] private string _prefix;
+	[SerializeField] private string _ip_addr;
+	[SerializeField] private bool _clearTemporary = true;
+	[SerializeField] private string _currentTrackName;
+	[SerializeField] private float _currentPlayPosition = 0f;
+	[SerializeField] private int _currentPlayingAudioSource = 0;
+	[SerializeField] private STATE _state = STATE.STATE_START;
+	[SerializeField] private AudioMixerGroup _audioMixerGroup;
+	[SerializeField] private SpectrumUnitManager _spectrumUnitManager;
+	[SerializeField] private int _index;
+
+	public string StartDateTime {
+		get => startDateTime;
+		set => startDateTime = value;
+	}
+
+	public int Duration {
+		get => duration;
+		set => duration = value;
+	}
+
+	public string Prefix {
+		get => _prefix;
+		set => _prefix = value;
+	}
+
+	public string IPAddr {
+		get => _ip_addr;
+		set => _ip_addr = value;
+	}
+
+	public bool ClearTemporary {
+		get => _clearTemporary;
+		set => _clearTemporary = value;
+	}
+
+	public string CurrentTrackName {
+		get => _currentTrackName;
+		set => _currentTrackName = value;
+	}
+
+	public float CurrentPlayPosition {
+		get => _currentPlayPosition;
+		set => _currentPlayPosition = value;
+	}
+
+	public int CurrentPlayingAudioSource {
+		get => _currentPlayingAudioSource;
+		set => _currentPlayingAudioSource = value;
+	}
+
+	public STATE State {
+		get => _state;
+		set => _state = value;
+	}
+
+	public AudioMixerGroup AudioMixerGroup {
+		get => _audioMixerGroup;
+		set => _audioMixerGroup = value;
+	}
+
+	public SpectrumUnitManager SpectrumUnitManager {
+		get => _spectrumUnitManager;
+		set => _spectrumUnitManager = value;
+	}
+
+	public int Index {
+		get => _index;
+		set => _index = value;
+	}
+
 	private IList _clipList;
 	private string _uuid;
 	private const string URL_PREPARE_FILE = "/preparefiles";
@@ -56,18 +116,18 @@ public class ChainSoundPlayer : MonoBehaviour {
 		foreach (AudioSource src in this._audioSources) {
 			src.outputAudioMixerGroup = this._audioMixerGroup;
 		}
-		if (this.clearTemporary == true) {
-			StartCoroutine(ClearTemporary());
+		if (this._clearTemporary == true) {
+			StartCoroutine(ClearTemporaryFiles());
 		}
 		else {
 			_state = STATE.STATE_CLEAR_DONE;
 		}
 	}
 
-	private IEnumerator ClearTemporary() {
+	private IEnumerator ClearTemporaryFiles() {
 		_state = STATE.STATE_CLEAR_REQUEST;
 		Debug.Log("Clear temp dir.");
-		var url = this.ip_addr + URL_CLEAR_TEMPORARY_DIR;
+		var url = this._ip_addr + URL_CLEAR_TEMPORARY_DIR;
 		var request = new WWW(url);
 		yield return request;
 		_state = STATE.STATE_CLEAR_DONE;
@@ -75,7 +135,7 @@ public class ChainSoundPlayer : MonoBehaviour {
 
 	private IEnumerator PrepareAudioClip() {
 		_state = STATE.STATE_PREPARE_REQUEST;
-		var url = this.ip_addr + URL_PREPARE_FILE + "/" + this.startDateTime + "/" + this.duration + "/" + this.prefix;
+		var url = this._ip_addr + URL_PREPARE_FILE + "/" + this.startDateTime + "/" + this.duration + "/" + this._prefix;
 		Debug.Log("Prepare audio clip : "+ url);
 
 		var request = new WWW(url);
@@ -105,7 +165,7 @@ public class ChainSoundPlayer : MonoBehaviour {
 		System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 		sw.Start();
 
-		var url = this.ip_addr + URL_GET_AUDIO_FILE + "/" + this._uuid + "/" + fileName;
+		var url = this._ip_addr + URL_GET_AUDIO_FILE + "/" + this._uuid + "/" + fileName;
 		var request = new WWW(url);
 		yield return request;
 
@@ -114,16 +174,16 @@ public class ChainSoundPlayer : MonoBehaviour {
 			audioSource.clip = request.GetAudioClip(false, false);
 			if (_currentTrackNumber == 0) {
 				if (_spectrumUnitManager != null) {
-					_spectrumUnitManager.SetAudioSource(audioSource, this.index);
+					_spectrumUnitManager.SetAudioSource(audioSource, this._index);
 					string[] delimiter = {"__"};
 					var freq = fileName.Split(delimiter, StringSplitOptions.RemoveEmptyEntries)[0];
 					var waveName = fileName.Split(delimiter, StringSplitOptions.RemoveEmptyEntries)[1];
-					_spectrumUnitManager.SetSpectrumLabel($"{waveName}({freq})", this.index);
+					_spectrumUnitManager.SetSpectrumLabel($"{waveName}({freq})", this._index);
 				}
 				audioSource.Play();
 				sw.Stop();
 				Debug.Log(sw.ElapsedMilliseconds + "ms");
-				currentTrackName = _lastLoadedTrackFile;
+				_currentTrackName = _lastLoadedTrackFile;
 				_state = STATE.STATE_RUNNING;
 			}
 			else {
@@ -154,7 +214,7 @@ public class ChainSoundPlayer : MonoBehaviour {
 			}
 
 			if (_state == STATE.STATE_DOWNLOAD_REQUEST) {
-				if (_currentTrackNumber == this.duration+ index*2) {
+				if (_currentTrackNumber == this.duration+ _index*2) {
 					_state = STATE.STATE_COMPLETE;
 					return;
 				}
@@ -169,16 +229,16 @@ public class ChainSoundPlayer : MonoBehaviour {
 			if (_state == STATE.STATE_DOWNLOAD_DONE) {
 				_currentPlayingAudioSource = (_currentPlayingAudioSource == 0) ? 1 : 0;
 				if (_spectrumUnitManager != null) {
-					_spectrumUnitManager.SetAudioSource(this._audioSources[_currentPlayingAudioSource], this.index);
+					_spectrumUnitManager.SetAudioSource(this._audioSources[_currentPlayingAudioSource], this._index);
 				}
 				this._audioSources[_currentPlayingAudioSource].Play();
-				currentTrackName = _lastLoadedTrackFile;
+				_currentTrackName = _lastLoadedTrackFile;
 				_state = STATE.STATE_RUNNING;
 			}
 		}
 
 		if (_frameCount++ % 60 == 0) {
-			currentPlayPosition = currentAudioSource.time;
+			_currentPlayPosition = currentAudioSource.time;
 		}
 	}
 }
